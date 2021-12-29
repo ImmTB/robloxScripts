@@ -122,7 +122,7 @@ gui.LightingFrame.BrightnessInput.FocusLost:Connect(function(enterPressed)
 		game:GetService("Lighting").Brightness = gui.LightingFrame.BrightnessInput.Text
 	end
 end)
--- MarketplaceService for gamepasses, developer products, etc.
+-- MarketplaceService
 donationPart:FindFirstChild("ClickDetector").MouseClick:Connect(function(plr)
 	game:GetService("MarketplaceService"):PromptProductPurchase(plr, 1231180052)
 end)
