@@ -1,0 +1,172 @@
+-- Local values
+local camerapart = game.Workspace:WaitForChild("CameraPart")
+local camera = game.Workspace:WaitForChild("Camera")
+local gui = script.Parent
+local player = game.Players.LocalPlayer
+local workspacePlayer = game.Workspace:FindFirstChild(player.Name)
+local tweenPart = game.Workspace:WaitForChild("TweenPart")
+local stud = game.ReplicatedStorage:WaitForChild("Stud")
+local donationPart = game.Workspace:WaitForChild("DonationThing"):WaitForChild("ClickToDonate")
+local tweenInfo = TweenInfo.new(
+	5, -- Time
+	Enum.EasingStyle.Quad,
+	Enum.EasingDirection.In,
+	-1,
+	true,
+	0
+)
+local tweenService = game:GetService("TweenService")
+local tweenGoal = {}
+tweenGoal.Position = Vector3.new(-48, 11.5, -3.5)
+local tween = tweenService:Create(tweenPart, tweenInfo, tweenGoal)
+-- Functions
+-- Camera changes
+gui:FindFirstChild("Enter").MouseButton1Click:Connect(function()
+	camera.CameraType = "Scriptable" -- Makes it so that camera can be positioned outside the character
+	camera.CFrame = camerapart.CFrame -- Positions the camera
+	print(player.Name.." Entered the camera!")
+end)
+--Use of "local function" rather than going straight to using ":Connect(function()"
+local function exitCamera()
+	camera.CameraType = "Custom"
+	print(player.Name.." Exited the camera!")
+end
+gui:FindFirstChild("Exit").MouseButton1Click:Connect(function()
+	exitCamera()
+end)
+-- Kicking players
+gui:FindFirstChild("LeaveGame").MouseButton1Click:Connect(function()
+	game.Players.LocalPlayer:Kick("You have left the game!")
+end)
+-- Visibility changing
+gui:FindFirstChild("ChangeGlassColor").MouseEnter:Connect(function()
+	gui:FindFirstChild("CGCdescription").Visible = true
+end)
+gui:FindFirstChild("ChangeGlassColor").MouseLeave:Connect(function()
+	gui:FindFirstChild("CGCdescription").Visible = false
+end)
+-- For loop, BrickColor
+gui:FindFirstChild("ChangeGlassColor").MouseButton1Click:Connect(function()
+	local randomcolor = BrickColor.Random()
+	for i, v in pairs(game.Workspace:WaitForChild("Glass"):GetChildren()) do
+		v.BrickColor = randomcolor
+	end
+end)
+-- Teleports
+gui.TPintojail.MouseButton1Click:Connect(function()
+	workspacePlayer.HumanoidRootPart.CFrame = game.Workspace.TP_IN.CFrame
+end)
+gui.TPoutofjail.MouseButton1Click:Connect(function()
+	workspacePlayer.HumanoidRootPart.CFrame = game.Workspace.TP_OUT.CFrame
+end)
+-- Tweening (parts) / Toggling button / Enum
+gui.ToggleTween.MouseButton1Click:Connect(function()
+	if tween.PlaybackState == Enum.PlaybackState.Playing then
+		tween:Pause()	
+	else
+		tween:Play()
+	end
+end)
+-- Effects / Instance.new / Destroy()
+gui.EffectFrame:FindFirstChild('Sparkles').MouseButton1Click:Connect(function()
+	if workspacePlayer.HumanoidRootPart:FindFirstChild("Fire") then
+		workspacePlayer.HumanoidRootPart.Fire:Destroy()
+	end
+	Instance.new("Sparkles", workspacePlayer.HumanoidRootPart)
+end)
+gui.EffectFrame:FindFirstChild('Fire').MouseButton1Click:Connect(function()
+	if workspacePlayer.HumanoidRootPart:FindFirstChild("Sparkles") then
+		workspacePlayer.HumanoidRootPart.Sparkles:Destroy()
+	end
+	Instance.new("Fire", workspacePlayer.HumanoidRootPart)
+end)
+gui.OpenEffectMenu.MouseButton1Click:Connect(function()
+	gui.EffectFrame.Visible = true
+end)
+gui.EffectFrame.ExitButton.MouseButton1Click:Connect(function()
+	gui.EffectFrame.Visible = false
+end)
+-- Clone() / Tools
+gui.GiveTool.MouseButton1Click:Connect(function()
+	if workspacePlayer:FindFirstChild("Stud") then
+		workspacePlayer.Stud:Destroy()
+	end
+	if player.Backpack:FindFirstChild("Stud") then
+		player.Backpack.Stud:Destroy()
+	end
+	local clone = stud:Clone()
+	clone.Parent = player.Backpack
+end)
+gui.DeleteTool.MouseButton1Click:Connect(function()
+	if workspacePlayer:FindFirstChild("Stud") then
+		workspacePlayer.Stud:Destroy()
+	end
+	if player.Backpack:FindFirstChild("Stud") then
+		player.Backpack.Stud:Destroy()
+	end
+end)
+-- Lighting configuration GUI
+gui.OpenLighting.MouseButton1Click:Connect(function()
+	gui.LightingFrame.Visible = true
+end)
+gui.LightingFrame.ExitButton.MouseButton1Click:Connect(function()
+	gui.LightingFrame.Visible = false
+end)
+gui.LightingFrame.ShadowInput.FocusLost:Connect(function(enterPressed)
+	if enterPressed then
+		game:GetService("Lighting").ShadowSoftness = gui.LightingFrame.ShadowInput.Text
+	end
+end)
+gui.LightingFrame.BrightnessInput.FocusLost:Connect(function(enterPressed)
+	if enterPressed then
+		game:GetService("Lighting").Brightness = gui.LightingFrame.BrightnessInput.Text
+	end
+end)
+-- MarketplaceService for gamepasses, developer products, etc.
+donationPart:FindFirstChild("ClickDetector").MouseClick:Connect(function(plr)
+	game:GetService("MarketplaceService"):PromptProductPurchase(plr, 1231180052)
+end)
+-- Account Age / Display Name (User info GUI)
+gui.InfoFrame.ExitButton.MouseButton1Click:Connect(function()
+	gui.InfoFrame.Visible = false
+end)
+gui.OpenInfo.MouseButton1Click:Connect(function()
+	gui.InfoFrame.Visible = true
+end)
+gui.InfoFrame.Input.FocusLost:Connect(function(enterPressed)
+	if enterPressed then
+		gui.InfoFrame.DisplayName1.Text = game.Players[gui.InfoFrame.Input.Text].DisplayName
+		gui.InfoFrame.AccAge1.Text = game.Players[gui.InfoFrame.Input.Text].AccountAge
+	end
+end)
+-- Play sound / math.random()
+gui.SoundPlay.MouseButton1Click:Connect(function()
+	local randomvalue = math.random(1,5)
+	local sound = Instance.new("Sound", workspacePlayer)
+	sound.Volume = .5
+	local sound1 = "rbxassetid://174960816"
+	local sound2 = "rbxassetid://7218305705"
+	local sound3 = "rbxasssetid://12222208"
+	local sound4 = "rbxasssetid://12222216"
+	local sound5 = "rbxasssetid://12222225"
+	if randomvalue == 1 then
+		sound.SoundId = sound1
+		sound:Play()
+	end
+	if randomvalue == 2 then
+		sound.SoundId = sound2
+		sound:Play()
+	end
+	if randomvalue == 3 then
+		sound.SoundId = sound3
+		sound:Play()
+	end
+	if randomvalue == 4 then
+		sound.SoundId = sound4
+		sound:Play()
+	end
+	if randomvalue == 5 then
+		sound.SoundId = sound5
+		sound:Play()
+	end
+end)
